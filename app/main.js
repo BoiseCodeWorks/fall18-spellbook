@@ -4,8 +4,7 @@ import SpellController from "./components/SpellController.js";
 
 class App {
   constructor() {
-    console.log('main')
-    controllers: {
+    this.controllers = {
       spellController: new SpellController()
     }
   }
