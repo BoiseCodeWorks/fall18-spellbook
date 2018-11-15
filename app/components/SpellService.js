@@ -1,14 +1,13 @@
+import Spell from "../models/Spell.js";
 
-//get all route
-//http://www.dnd5eapi.co/api/spells
-
-//get details 
-//http://www.dnd5eapi.co/api/spells/:id
-
+function formatUrl(url) {
+  return '//bcw-getter.herokuapp.com/?url=' + encodeURIComponent(url)
+}
 
 let _spellAPI = axios.create({
-  baseURL: '//bcw-getter.herokuapp.com/?url=' + encodeURIComponent("http://www.dnd5eapi.co/api/spells/")
+  baseURL: ''
 })
+
 // all the spells in API
 let _spells = [];
 // all spells in my Spellbook
@@ -19,14 +18,17 @@ function handleError(error) {
   throw new Error(error);
 }
 export default class SpellService {
-  constructor() {
-    console.log('service')
-  }
   get spells() {
     return _spells;
   }
+  get activeSpell() {
+    return _activeSpell;
+  }
+  get spellbook() {
+    return _spellBook
+  }
   getAllSpells(callback) {
-    _spellAPI.get('')
+    _spellAPI.get(formatUrl('http://www.dnd5eapi.co/api/spells/'))
       .then(res => {
         _spells = res.data.results
         callback()
@@ -34,13 +36,19 @@ export default class SpellService {
       .catch(handleError)
   }
   addSpell() {
-    // push _activeSpell to spellbook
+    if (!_spellBook.includes(_activeSpell)) {
+      _spellBook.push(_activeSpell)
+    }
   }
-  removeSpell(spell) {
-    // remove spell from spellbook
+  removeSpell(index) {
+    _spellBook.splice(index, 1)
   }
-  getSpellDetails(spellIndex) {
-    // all details of spell
-    // set to _activeSpell
+  getSpellDetails(spellIndex, draw) {
+    _spellAPI.get(formatUrl('http://www.dnd5eapi.co/api/spells/' + spellIndex))
+      .then(res => {
+        _activeSpell = new Spell(res.data)
+        draw()
+      })
+      .catch(handleError)
   }
 }

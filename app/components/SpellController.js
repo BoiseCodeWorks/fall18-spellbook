@@ -14,10 +14,25 @@ function _drawAllSpells() {
   document.getElementById("all-spells").innerHTML = template + "</ul>"
 }
 function _drawSpellDetails() {
-
+  let spell = _spellService.activeSpell
+  let template = `
+  <h4>${spell.name}</h4>
+  <p><em>${spell.range} - ${spell.duration} - Level:${spell.level}</em></p>
+  <p>${spell.desc}</p>
+  <button onclick="app.controllers.spellController.addSpell()">Add Spell</button>
+  `
+  document.getElementById('spell-details').innerHTML = template
 }
 function _drawSpellbook() {
-
+  let spellbook = _spellService.spellbook
+  let template = '<ul>'
+  spellbook.forEach((spell, index) => {
+    template += `
+    <li> ${spell.name} </li>
+    <button onclick="app.controllers.spellController.removeSpell(${index})">REMOVE</button> 
+    `
+  })
+  document.getElementById("spellbook").innerHTML = template + '</ul>'
 }
 
 export default class SpellController {
@@ -25,12 +40,14 @@ export default class SpellController {
     _spellService.getAllSpells(_drawAllSpells)
   }
   addSpell() {
-
+    _spellService.addSpell()
+    _drawSpellbook()
   }
-  removeSpell() {
-
+  removeSpell(index) {
+    _spellService.removeSpell(index)
+    _drawSpellbook()
   }
   getSpellDetails(spellIndex) {
-    console.log(spellIndex)
+    _spellService.getSpellDetails(spellIndex, _drawSpellDetails)
   }
 }
